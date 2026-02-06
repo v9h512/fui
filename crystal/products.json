@@ -1,0 +1,4 @@
+[
+ {"id":"robux","name":"Robux","price":5,"emoji":"💎","stripe":"PUT_STRIPE_LINK"},
+ {"id":"vip","name":"VIP","price":10,"emoji":"🔥","stripe":"PUT_STRIPE_LINK"}
+]
