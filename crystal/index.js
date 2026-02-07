@@ -16,6 +16,29 @@ import { createCrypto } from "./utils/crypto.js";
 
 dotenv.config();
 
+/* ✅ تأكد أن مجلد الفواتير موجود (يحميك من ENOENT) */
+if (!fs.existsSync("./invoices")) {
+ fs.mkdirSync("./invoices", { recursive: true });
+}
+
+/* ✅ فحص بسيط لصحة الروابط */
+function isValidHttpUrl(str) {
+ if (!str || typeof str !== "string") return false;
+ try {
+  const u = new URL(str);
+  return u.protocol === "http:" || u.protocol === "https:";
+ } catch {
+  return false;
+ }
+}
+
+/* ✅ منع “Interaction failed” بدون ما نغيّر رسائلك */
+async function safeDefer(i) {
+ try {
+  if (!i.deferred && !i.replied) await i.deferUpdate();
+ } catch {}
+}
+
 /* ================== Express ================== */
 
 const app = express();
@@ -110,6 +133,8 @@ client.on("interactionCreate", async i => {
   /* اختيار منتج */
 
   if (i.customId.startsWith("prod_")) {
+   await safeDefer(i);
+
    const prod = products.find(x => `prod_${x.id}` === i.customId);
    if (!prod) return;
 
@@ -118,13 +143,18 @@ client.on("interactionCreate", async i => {
      .setCustomId(`crypto_${prod.id}`)
      .setLabel("Crypto")
      .setEmoji("🪙")
-     .setStyle(ButtonStyle.Success),
-
-    new ButtonBuilder()
-     .setLabel("Stripe")
-     .setURL(prod.stripe)
-     .setStyle(ButtonStyle.Link)
+     .setStyle(ButtonStyle.Success)
    );
+
+   /* ✅ لا ننشئ زر Stripe إلا إذا الرابط صحيح (يمنع Invalid URL) */
+   if (isValidHttpUrl(prod.stripe)) {
+    row.addComponents(
+     new ButtonBuilder()
+      .setLabel("Stripe")
+      .setURL(prod.stripe)
+      .setStyle(ButtonStyle.Link)
+    );
+   }
 
    await i.channel.send({
     content: `اختر طريقة الدفع لـ ${prod.name}`,
@@ -135,6 +165,8 @@ client.on("interactionCreate", async i => {
   /* كريبتو */
 
   if (i.customId.startsWith("crypto_")) {
+   await safeDefer(i);
+
    const id = i.customId.split("_")[1];
    const prod = products.find(p => p.id === id);
    if (!prod) return;
@@ -142,7 +174,20 @@ client.on("interactionCreate", async i => {
    const order = uuid();
    const pay = await createCrypto(prod.price, order, process.env);
 
-   await i.channel.send(`💳 ادفع هنا:\n${pay.result.url}`);
+   /* ✅ خذ الرابط بأمان (بدون كراش) */
+   const payUrl =
+    pay?.result?.url ||
+    pay?.result?.pay_url ||
+    pay?.result?.payment_url ||
+    pay?.url ||
+    pay?.payment_url;
+
+   if (!payUrl) {
+    console.log("Cryptomus response (no url):", pay);
+    return i.channel.send("❌ صار خطأ في إنشاء رابط الدفع (راجع Logs).");
+   }
+
+   await i.channel.send(`💳 ادفع هنا:\n${payUrl}`);
   }
 
  } catch (e) {
@@ -158,12 +203,19 @@ client.on("messageCreate", async m => {
   try {
    const file = `./invoices/${uuid()}.pdf`;
 
-   createInvoice(
-    { buyer: m.channel.name, store: "Crystal Store", status: "Paid" },
-    file
+   /* ✅ يشتغل سواء createInvoice sync أو async */
+   await Promise.resolve(
+    createInvoice(
+     { buyer: m.channel.name, store: "Crystal Store", status: "Paid" },
+     file
+    )
    );
 
-   await m.channel.send({ files: [file] });
+   if (fs.existsSync(file)) {
+    await m.channel.send({ files: [file] });
+   } else {
+    await m.channel.send("❌ ما قدرت أنشئ ملف الفاتورة.");
+   }
 
    const log = await client.channels.fetch(process.env.LOG_CHANNEL_ID);
    if (log) await log.send(`🧾 عملية جديدة\n${m.channel.name}`);
