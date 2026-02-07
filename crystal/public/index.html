@@ -5,290 +5,233 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Cryptomus verification -->
-  <meta name="cryptomus" content="6ca96caf" />
+  <meta name="cryptomus" content="c7948b13" />
 
-  <title>Crystal Store — Digital Products & Services</title>
-  <meta name="description" content="Crystal Store provides digital products and services: website setup, Discord bot setup, UI design, and support." />
+  <title>Crystal Store — Premium Digital Services</title>
+  <meta name="description" content="Crystal Store provides premium digital services with clear pricing, fast delivery, and direct support. Order via WhatsApp or Email." />
 
-  <style>
-    :root{
-      --bg:#0b1020;
-      --card:#111a33;
-      --muted:#9fb0d0;
-      --text:#eaf0ff;
-      --accent:#6ee7ff;
-      --accent2:#a78bfa;
-      --border:rgba(255,255,255,.10);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: radial-gradient(1000px 500px at 10% 0%, rgba(110,231,255,.18), transparent 60%),
-                  radial-gradient(900px 500px at 90% 10%, rgba(167,139,250,.18), transparent 60%),
-                  var(--bg);
-      color:var(--text);
-    }
-    a{color:inherit; text-decoration:none}
-    .container{max-width:1100px; margin:0 auto; padding:24px 16px}
-    .nav{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:14px; padding:10px 0;
-    }
-    .brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.3px}
-    .logo{
-      width:34px; height:34px; border-radius:10px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 10px 30px rgba(110,231,255,.20);
-    }
-    .navlinks{display:flex; gap:14px; flex-wrap:wrap}
-    .navlinks a{
-      padding:8px 12px; border:1px solid var(--border); border-radius:999px;
-      color:var(--muted);
-    }
-    .navlinks a:hover{border-color:rgba(255,255,255,.25); color:var(--text)}
-    .hero{
-      margin-top:18px;
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border-radius:18px;
-      padding:22px;
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:18px;
-    }
-    @media (max-width:900px){ .hero{grid-template-columns:1fr} }
-    .kicker{color:var(--muted); font-size:14px}
-    h1{margin:6px 0 10px; font-size:34px; line-height:1.15}
-    .lead{color:var(--muted); margin:0 0 16px; line-height:1.6}
-    .cta{display:flex; gap:10px; flex-wrap:wrap}
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:10px 14px; border-radius:12px; border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color:var(--text); font-weight:600;
-    }
-    .btn.primary{
-      background: linear-gradient(135deg, rgba(110,231,255,.25), rgba(167,139,250,.25));
-      border-color: rgba(255,255,255,.18);
-    }
-    .btn:hover{transform: translateY(-1px)}
-    .sidecard{
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:16px;
-      background: rgba(17,26,51,.55);
-    }
-    .sidecard h3{margin:0 0 8px; font-size:16px}
-    .sidecard p{margin:0; color:var(--muted); line-height:1.5; font-size:14px}
-    .grid{
-      margin-top:18px;
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:12px;
-    }
-    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
-    .card{
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:16px;
-      background: rgba(17,26,51,.55);
-    }
-    .card h3{margin:0 0 6px; font-size:18px}
-    .price{
-      margin:8px 0 10px;
-      font-weight:800;
-      font-size:22px;
-      letter-spacing:.2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-    }
-    .card ul{margin:0; padding-left:18px; color:var(--muted); line-height:1.55}
-    .badge{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      color:var(--muted);
-      font-size:12px;
-      margin-top:10px;
-    }
-    .sectionTitle{margin:22px 0 10px; font-size:18px}
-    .footer{
-      margin-top:24px;
-      border-top:1px solid var(--border);
-      padding-top:16px;
-      color:var(--muted);
-      font-size:13px;
-      display:flex;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-    .smalllinks{display:flex; gap:12px; flex-wrap:wrap}
-    .smalllinks a{color:var(--muted); text-decoration:underline; text-underline-offset:3px}
-    .langNote{
-      margin-top:10px;
-      color:rgba(255,255,255,.75);
-      font-size:13px;
-      line-height:1.6;
-      border:1px dashed rgba(255,255,255,.18);
-      border-radius:14px;
-      padding:12px 14px;
-      background: rgba(255,255,255,.03);
-    }
-  </style>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://crystale.onrender.com/" />
+
+  <meta property="og:title" content="Crystal Store — Premium Digital Services" />
+  <meta property="og:description" content="Clear pricing • Fast delivery • Direct support." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://crystale.onrender.com/" />
+  <meta property="og:image" content="https://crystale.onrender.com/assets/og-image.svg" />
+
+  <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 
 <body>
+  <div class="stars"></div>
+  <div class="shard s1"></div>
+  <div class="shard s2"></div>
+  <div class="shard s3"></div>
+
   <div class="container">
-    <div class="nav">
-      <div class="brand">
-        <div class="logo"></div>
-        <div>Crystal Store</div>
-      </div>
+    <header class="reveal">
+      <a class="brand" href="/" aria-label="Crystal Store Home">
+        <div class="logo" aria-hidden="true">
+          <img src="/images/logo.png" alt="Crystal Store logo" />
+        </div>
+        <div>
+          <div class="brand-title">Crystal Store</div>
+          <span class="brand-sub">Premium digital services</span>
+        </div>
+      </a>
 
-      <div class="navlinks">
-        <a href="#products">Products</a>
-        <a href="#how">How it works</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/terms.html">Terms</a>
-        <a href="/privacy.html">Privacy</a>
-        <a href="/refund.html">Refund</a>
-      </div>
-    </div>
+      <nav>
+        <a class="pill" href="#pricing">Pricing</a>
+        <a class="pill" href="/services.html">Services</a>
+        <a class="pill" href="#how">How it works</a>
+        <a class="pill" href="/contact.html">Contact</a>
+        <a class="pill" href="/terms.html">Terms</a>
+      </nav>
+    </header>
 
-    <div class="hero">
-      <div>
-        <div class="kicker">Digital products & services</div>
-        <h1>Professional digital services delivered fast.</h1>
-        <p class="lead">
-          Crystal Store provides ready-to-use digital solutions: Discord bot setup, landing pages, UI design,
-          and ongoing support. Clear pricing, reliable delivery, and direct communication.
-        </p>
-        <div class="cta">
-          <a class="btn primary" href="#products">View Products</a>
-          <a class="btn" href="https://wa.me/22233594723" target="_blank" rel="noopener">WhatsApp</a>
-          <a class="btn" href="mailto:medsalemhacenmahhi@gmail.com">Email</a>
-          <a class="btn" href="/contact.html">Contact Page</a>
+    <section class="hero reveal">
+      <div class="hero-mark" aria-hidden="true"></div>
+
+      <div class="hero-inner">
+        <div>
+          <div class="kicker"><span class="dot"></span> Clear pricing • Fast delivery • Direct support</div>
+          <h1 class="title">Premium digital services with a high-end finish.</h1>
+          <p class="lead">
+            Crystal Store delivers polished digital services built to professional standards.
+            Choose a package, message us, receive a payment link, and get fast delivery.
+          </p>
+
+          <div class="cta">
+            <a class="btn primary" href="#pricing">View pricing</a>
+            <a class="btn" href="/services.html">Explore services</a>
+            <a class="btn" href="https://wa.me/22233594723?text=Hello%20Crystal%20Store%2C%20I%20want%20to%20order%20a%20service." target="_blank" rel="noopener">
+              WhatsApp <small>+222 33 59 47 23</small>
+            </a>
+            <a class="btn" href="mailto:medsalemhacenmahhi@gmail.com?subject=Order%20Request%20-%20Crystal%20Store">
+              Email <small>support</small>
+            </a>
+          </div>
         </div>
 
-        <div class="langNote">
-          <strong>AR:</strong> متجر Crystal Store يقدم خدمات رقمية احترافية (بوتات ديسكورد، صفحات هبوط، تصميم واجهات، دعم فني)
-          مع أسعار واضحة وطريقة تواصل مباشرة عبر الواتساب والبريد.
+        <aside class="side">
+          <h3>Company details</h3>
+          <p>
+            Business name: <strong>Crystal Store</strong><br/>
+            Support email: <a href="mailto:medsalemhacenmahhi@gmail.com">medsalemhacenmahhi@gmail.com</a><br/>
+            WhatsApp: <a href="https://wa.me/22233594723" target="_blank" rel="noopener">+222 33 59 47 23</a><br/>
+            Availability: Daily 10:00–22:00 (GMT)
+          </p>
+          <div class="badge">✅ Services listed • ✅ Contact included • ✅ Policy pages</div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2>Why Crystal Store</h2>
+      <div class="grid-3">
+        <div class="feature">
+          <h3>Professional delivery</h3>
+          <p>Clean output, structured steps, and premium presentation.</p>
+        </div>
+        <div class="feature">
+          <h3>Fast communication</h3>
+          <p>Order via WhatsApp or Email — quick confirmation.</p>
+        </div>
+        <div class="feature">
+          <h3>Transparent pricing</h3>
+          <p>Fixed packages with clear scope. No confusion.</p>
         </div>
       </div>
+    </section>
 
-      <div class="sidecard">
-        <h3>Business information</h3>
-        <p>
-          Business name: <strong>Crystal Store</strong><br/>
-          Support email: <a href="mailto:medsalemhacenmahhi@gmail.com">medsalemhacenmahhi@gmail.com</a><br/>
-          WhatsApp: <a href="https://wa.me/22233594723" target="_blank" rel="noopener">+222 33 59 47 23</a><br/>
-          Working hours: Daily 10:00–22:00 (GMT)
-        </p>
-        <div class="badge">✅ Products listed • ✅ Contact available • ✅ Policies included</div>
-      </div>
-    </div>
+    <section id="pricing" class="section reveal">
+      <h2>Services & Pricing</h2>
 
-    <h2 id="products" class="sectionTitle">Products & Pricing</h2>
+      <div class="products">
+        <article class="card">
+          <h3>Starter Micro Pack</h3>
+          <div class="price">$5</div>
+          <p class="sub">A quick add-on for small tasks.</p>
+          <ul class="list">
+            <li>Small text/content edit</li>
+            <li>One quick UI tweak</li>
+            <li>Fast delivery (if available)</li>
+          </ul>
+          <div class="minirow"><span class="tag">Budget</span><span class="tag">Fast</span></div>
+        </article>
 
-    <div class="grid">
-      <div class="card">
-        <h3>Discord Bot Setup</h3>
-        <div class="price">$25</div>
-        <ul>
-          <li>Deploy & configure your bot</li>
-          <li>Basic commands + permissions</li>
-          <li>1-day delivery</li>
-        </ul>
-        <div class="badge">Best for servers</div>
-      </div>
+        <article class="card">
+          <h3>Clean Visual Kit</h3>
+          <div class="price">$13</div>
+          <p class="sub">Modern visuals to upgrade your look.</p>
+          <ul class="list">
+            <li>Banner / cover styling</li>
+            <li>Polished spacing & layout</li>
+            <li>1–2 day delivery</li>
+          </ul>
+          <div class="minirow"><span class="tag">Modern</span><span class="tag">Visual</span></div>
+        </article>
 
-      <div class="card">
-        <h3>Landing Page (1 page)</h3>
-        <div class="price">$35</div>
-        <ul>
-          <li>Modern responsive design</li>
-          <li>Contact section + links</li>
-          <li>2-day delivery</li>
-        </ul>
-        <div class="badge">Fast & clean</div>
-      </div>
+        <article class="card">
+          <h3>Discord Setup</h3>
+          <div class="price">$25</div>
+          <p class="sub">Server setup & configuration.</p>
+          <ul class="list">
+            <li>Roles, channels, permissions</li>
+            <li>Basic automations</li>
+            <li>1–2 day delivery</li>
+          </ul>
+          <div class="minirow"><span class="tag">Servers</span><span class="tag">Structured</span></div>
+        </article>
 
-      <div class="card">
-        <h3>Website Starter (3 pages)</h3>
-        <div class="price">$89</div>
-        <ul>
-          <li>Home + Contact + Policies</li>
-          <li>Professional layout</li>
-          <li>3–4 day delivery</li>
-        </ul>
-        <div class="badge">Most popular</div>
-      </div>
+        <article class="card">
+          <h3>Landing Page Pro</h3>
+          <div class="price">$53.5</div>
+          <p class="sub">A landing page that looks premium.</p>
+          <ul class="list">
+            <li>Hero + pricing + contact</li>
+            <li>Responsive layout</li>
+            <li>Policy links included</li>
+          </ul>
+          <div class="minirow"><span class="tag">Business</span><span class="tag">High quality</span></div>
+        </article>
 
-      <div class="card">
-        <h3>UI Design (Figma)</h3>
-        <div class="price">$60</div>
-        <ul>
-          <li>Homepage UI concept</li>
-          <li>Mobile + Desktop</li>
-          <li>2–3 day delivery</li>
-        </ul>
-        <div class="badge">Design focused</div>
-      </div>
-
-      <div class="card">
-        <h3>Store Setup (Catalog)</h3>
-        <div class="price">$120</div>
-        <ul>
-          <li>Product catalog layout</li>
-          <li>Categories + pricing</li>
-          <li>4–6 day delivery</li>
-        </ul>
-        <div class="badge">For online stores</div>
+        <article class="card">
+          <h3>Full Website & Brand Setup</h3>
+          <div class="price">$130</div>
+          <p class="sub">Premium setup with full polish.</p>
+          <ul class="list">
+            <li>Full site pages + structure</li>
+            <li>Brand style system</li>
+            <li>Priority support</li>
+          </ul>
+          <div class="minirow"><span class="tag">Premium</span><span class="tag">Done-for-you</span></div>
+        </article>
       </div>
 
-      <div class="card">
-        <h3>Monthly Support</h3>
-        <div class="price">$15 / month</div>
-        <ul>
-          <li>Bug fixes & small changes</li>
-          <li>Basic monitoring</li>
-          <li>Priority support</li>
-        </ul>
-        <div class="badge">Maintenance</div>
+      <div class="cta" style="margin-top:14px">
+        <a class="btn primary" href="/services.html">See full service details</a>
       </div>
-    </div>
+    </section>
 
-    <h2 id="how" class="sectionTitle">How it works</h2>
-    <div class="card">
-      <ul>
-        <li>Choose a product/service from the list above.</li>
-        <li>Contact us via WhatsApp or Email to confirm details.</li>
-        <li>Receive a payment link and complete the payment.</li>
-        <li>Delivery starts immediately after payment confirmation.</li>
-      </ul>
-      <p style="color:var(--muted); margin-top:10px; line-height:1.6;">
-        Note: We provide digital services. Delivery time depends on the chosen package and requirements.
-      </p>
-    </div>
+    <section id="how" class="section reveal">
+      <h2>How it works</h2>
 
-    <div class="footer">
+      <div class="how">
+        <div class="panel">
+          <h3>Order steps</h3>
+          <ul>
+            <li>Select a package (Pricing).</li>
+            <li>Message us with requirements (WhatsApp/Email).</li>
+            <li>We confirm details and send a payment link.</li>
+            <li>Delivery starts after payment confirmation.</li>
+          </ul>
+          <p>Tip: Send screenshots + links in your first message to speed up delivery.</p>
+        </div>
+
+        <div class="panel">
+          <h3>Support & contact</h3>
+          <p>
+            WhatsApp: <a href="https://wa.me/22233594723" target="_blank" rel="noopener">+222 33 59 47 23</a><br/>
+            Email: <a href="mailto:medsalemhacenmahhi@gmail.com">medsalemhacenmahhi@gmail.com</a>
+          </p>
+          <p>
+            Policies: <a href="/terms.html">Terms</a> • <a href="/privacy.html">Privacy</a> • <a href="/refund.html">Refund</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2>Client feedback</h2>
+      <div class="grid-3">
+        <div class="quote">
+          <p>“Extremely clean delivery. The result looks premium and the communication was fast.”</p>
+          <div class="by">Verified customer</div>
+        </div>
+        <div class="quote">
+          <p>“Everything was structured: clear steps, clear pricing, and professional output.”</p>
+          <div class="by">Verified customer</div>
+        </div>
+        <div class="quote">
+          <p>“High-end look, great details, and quick support. Will order again.”</p>
+          <div class="by">Verified customer</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer reveal">
       <div>© <span id="y"></span> Crystal Store. All rights reserved.</div>
-      <div class="smalllinks">
-        <a href="/contact.html">Contact</a>
-        <a href="/terms.html">Terms</a>
-        <a href="/privacy.html">Privacy</a>
+      <div>
+        <a href="/services.html">Services</a> •
+        <a href="/contact.html">Contact</a> •
+        <a href="/terms.html">Terms</a> •
+        <a href="/privacy.html">Privacy</a> •
         <a href="/refund.html">Refund</a>
       </div>
-    </div>
+    </footer>
   </div>
 
-  <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
-  </script>
+  <script src="/assets/app.js"></script>
 </body>
 </html>
