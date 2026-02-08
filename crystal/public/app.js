@@ -1,0 +1,1 @@
+document.addEventListener("click", (e)=>{const b=e.target.closest("[data-copy]"); if(!b)return; const id=b.getAttribute("data-copy"); navigator.clipboard.writeText(id).then(()=>{b.textContent="Copied ✓"; setTimeout(()=>b.textContent="Copy ID",1200);});});

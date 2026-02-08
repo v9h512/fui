@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="g1" cx="15%" cy="10%" r="80%">
+      <stop offset="0%" stop-color="#6ee7ff" stop-opacity="0.35"/>
+      <stop offset="55%" stop-color="#6ee7ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g2" cx="90%" cy="15%" r="80%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.35"/>
+      <stop offset="55%" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#030513"/>
+      <stop offset="60%" stop-color="#050814"/>
+      <stop offset="100%" stop-color="#050814"/>
+    </linearGradient>
+    <linearGradient id="txt" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6ee7ff"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#g1)"/>
+  <rect width="1200" height="630" fill="url(#g2)"/>
+
+  <g opacity="0.12">
+    <path d="M-40 460 L360 260 L410 520 L10 620 Z" fill="#6ee7ff"/>
+    <path d="M820 200 L1280 80 L1210 380 L770 330 Z" fill="#a78bfa"/>
+  </g>
+
+  <text x="80" y="220" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="800" fill="url(#txt)">
+    Crystal Store
+  </text>
+  <text x="80" y="285" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="600" fill="rgba(238,243,255,0.75)">
+    Premium digital services • Clear pricing • Fast delivery
+  </text>
+
+  <g opacity="0.85">
+    <rect x="80" y="330" width="520" height="90" rx="18" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)"/>
+    <text x="110" y="386" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="rgba(238,243,255,0.85)">
+      WhatsApp: +222 33 59 47 23  •  Email: medsalemhacenmahhi@gmail.com
+    </text>
+  </g>
+
+  <text x="80" y="520" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="rgba(238,243,255,0.70)">
+    Packages: $5 • $13 • $25 • $53.5 • $130
+  </text>
+
+  <text x="80" y="570" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" fill="rgba(238,243,255,0.55)">
+    crystale.onrender.com
+  </text>
+</svg>

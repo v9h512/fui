@@ -1,0 +1,42 @@
+[
+  {
+    "id": "p1",
+    "name": "Starter Pack",
+    "emoji": "✨",
+    "price": 5.0,
+    "description": "Perfect for quick small tasks and fast delivery.",
+    "delivery": "10-30 min"
+  },
+  {
+    "id": "p2",
+    "name": "Plus Bundle",
+    "emoji": "⚡",
+    "price": 13.0,
+    "description": "More value + priority handling.",
+    "delivery": "10-20 min"
+  },
+  {
+    "id": "p3",
+    "name": "Pro Bundle",
+    "emoji": "💎",
+    "price": 25.0,
+    "description": "Best for most customers. Priority + bonus support.",
+    "delivery": "5-15 min"
+  },
+  {
+    "id": "p4",
+    "name": "Ultra Bundle",
+    "emoji": "🔥",
+    "price": 53.5,
+    "description": "High priority. Fastest delivery window.",
+    "delivery": "5-10 min"
+  },
+  {
+    "id": "p5",
+    "name": "Elite Bundle",
+    "emoji": "👑",
+    "price": 130.0,
+    "description": "VIP priority, fastest delivery + dedicated support.",
+    "delivery": "1-5 min"
+  }
+]
