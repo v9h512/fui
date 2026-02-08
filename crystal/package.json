@@ -14,5 +14,8 @@
     "uuid": "^9.0.1",
     "pdfkit": "^0.15.0",
     "node-fetch": "^3.3.2"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
