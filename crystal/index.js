@@ -21,10 +21,15 @@ fs.mkdirSync(path.resolve("./invoices"), { recursive: true });
 const STORE_NAME = process.env.STORE_NAME || "Crystal Store";
 const products = JSON.parse(fs.readFileSync("./products.json", "utf8"));
 
+const baseUrl = (process.env.PUBLIC_BASE_URL || "").replace(/\/$/, "");
+
 /* ================== Express ================== */
 const app = express();
+
+// Route-specific parsers (kept like your style)
 app.use("/webhook/cryptomus", express.json({ limit: "1mb" }));
 app.use("/webhook/stripe", express.raw({ type: "application/json" }));
+
 app.use(express.static("public"));
 app.get("/health", (_, res) => res.status(200).send("ok"));
 
@@ -46,6 +51,7 @@ app.post("/webhook/cryptomus", async (req, res) => {
       transactionId: payload?.uuid || payload?.txid || payload?.payment_uuid || null,
       paidAmount: payload?.amount || null,
     });
+
     if (order) await notifyPaid(order);
     return res.status(200).send("ok");
   } catch (e) {
@@ -64,12 +70,14 @@ app.post("/webhook/stripe", async (req, res) => {
     if (whSecret) {
       event = stripe.webhooks.constructEvent(req.body, sig, whSecret);
     } else {
+      // fallback for local/manual tests (not recommended for production)
       event = JSON.parse(req.body.toString("utf8"));
     }
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       const orderId = session?.metadata?.orderId;
+
       if (orderId) {
         const order = markPaid(orderId, {
           method: "stripe",
@@ -77,9 +85,11 @@ app.post("/webhook/stripe", async (req, res) => {
           transactionId: session?.payment_intent || session?.id || null,
           paidAmount: session?.amount_total ? `$${(session.amount_total / 100).toFixed(2)}` : null,
         });
+
         if (order) await notifyPaid(order);
       }
     }
+
     return res.status(200).send("ok");
   } catch (e) {
     console.log("Stripe webhook error:", e);
@@ -87,11 +97,18 @@ app.post("/webhook/stripe", async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT || 20180, () => console.log("Web server started"));
+// ✅ Render-friendly port binding + clear log
+const PORT = Number(process.env.PORT || 10000);
+app.listen(PORT, () => console.log("Web server started on port", PORT));
 
 /* ================== Discord ================== */
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.DirectMessages
+  ],
   partials: [Partials.Channel],
 });
 
@@ -163,7 +180,11 @@ client.on(Events.InteractionCreate, async interaction => {
   if (interaction.commandName !== "panel") return;
 
   const row = new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId("open_ticket").setLabel("Open Ticket").setEmoji("🎫").setStyle(ButtonStyle.Primary)
+    new ButtonBuilder()
+      .setCustomId("open_ticket")
+      .setLabel("Open Ticket")
+      .setEmoji("🎫")
+      .setStyle(ButtonStyle.Primary)
   );
 
   await interaction.channel.send({ embeds: [panelEmbed()], components: [row] });
@@ -175,20 +196,49 @@ client.on(Events.InteractionCreate, async i => {
 
   try {
     if (i.customId === "open_ticket") {
-      const existing = i.guild.channels.cache.find(c => c.type === ChannelType.GuildText && c.name === `ticket-${i.user.id}`);
-      if (existing) return i.reply({ content: `⚠️ You already have a ticket: <#${existing.id}>`, ephemeral: true });
+      // ✅ Prevent double tickets reliably using topic marker
+      const existing = i.guild.channels.cache.find(
+        c =>
+          c.type === ChannelType.GuildText &&
+          c.topic === `ticket:${i.user.id}`
+      );
+
+      if (existing) {
+        return i.reply({
+          content: `⚠️ You already have a ticket: <#${existing.id}>`,
+          ephemeral: true
+        });
+      }
 
       const overwrites = [
         { id: i.guild.roles.everyone.id, deny: [PermissionFlagsBits.ViewChannel] },
         { id: i.user.id, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory] },
       ];
-      if (process.env.SUPPORT_ROLE_ID) overwrites.push({ id: process.env.SUPPORT_ROLE_ID, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory] });
-      if (process.env.OWNER_ID) overwrites.push({ id: process.env.OWNER_ID, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.ManageChannels] });
+
+      if (process.env.SUPPORT_ROLE_ID) {
+        overwrites.push({
+          id: process.env.SUPPORT_ROLE_ID,
+          allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+        });
+      }
+
+      if (process.env.OWNER_ID) {
+        overwrites.push({
+          id: process.env.OWNER_ID,
+          allow: [
+            PermissionFlagsBits.ViewChannel,
+            PermissionFlagsBits.SendMessages,
+            PermissionFlagsBits.ReadMessageHistory,
+            PermissionFlagsBits.ManageChannels
+          ]
+        });
+      }
 
       const ticket = await i.guild.channels.create({
         name: `ticket-${i.user.id}`,
         type: ChannelType.GuildText,
         parent: process.env.TICKET_CATEGORY_ID || null,
+        topic: `ticket:${i.user.id}`, // ✅ marker
         permissionOverwrites: overwrites,
       });
 
@@ -197,11 +247,23 @@ client.on(Events.InteractionCreate, async i => {
       const rows = [];
       let row = new ActionRowBuilder();
       let count = 0;
+
       for (const p of products) {
-        if (count === 5) { rows.push(row); row = new ActionRowBuilder(); count = 0; }
-        row.addComponents(new ButtonBuilder().setCustomId(`choose_prod:${p.id}`).setLabel(`${p.name} (${money(p.price)})`).setEmoji(p.emoji).setStyle(ButtonStyle.Secondary));
+        if (count === 5) {
+          rows.push(row);
+          row = new ActionRowBuilder();
+          count = 0;
+        }
+        row.addComponents(
+          new ButtonBuilder()
+            .setCustomId(`choose_prod:${p.id}`)
+            .setLabel(`${p.name} (${money(p.price)})`)
+            .setEmoji(p.emoji)
+            .setStyle(ButtonStyle.Secondary)
+        );
         count++;
       }
+
       if (count) rows.push(row);
 
       await ticket.send({ embeds: [productsEmbed()], components: rows });
@@ -245,19 +307,41 @@ client.on(Events.InteractionCreate, async i => {
       if (!order) return i.reply({ content: "❌ Order not found.", ephemeral: true });
       if (order.status === "paid") return i.reply({ content: "✅ Already paid.", ephemeral: true });
 
-      const cb = (process.env.PUBLIC_BASE_URL || "").replace(/\/$/, "") + "/webhook/cryptomus";
+      const cb = baseUrl ? `${baseUrl}/webhook/cryptomus` : undefined;
+
       const inv = await createCryptomusInvoice({
         amountUsd: order.product.price,
         orderId: order.id,
         description: `${STORE_NAME} | ${order.product.name}`,
-        successUrl: process.env.PUBLIC_BASE_URL || undefined,
-        callbackUrl: cb.includes("http") ? cb : undefined,
+        successUrl: baseUrl || undefined,
+        callbackUrl: cb,
         env: process.env,
       });
 
-      upsertOrder({ ...order, payment: { ...order.payment, method: "crypto", provider: "cryptomus", url: inv.url, transactionId: inv.uuid } });
+      // ✅ prevent crash if inv.url missing
+      if (!inv?.url) {
+        console.log("Cryptomus invoice response:", inv);
+        return i.reply({
+          content: "❌ Failed to create Cryptomus payment link. Check Merchant UUID / API key.",
+          ephemeral: true
+        });
+      }
 
-      const payRow = new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel("Pay Now").setStyle(ButtonStyle.Link).setURL(inv.url));
+      upsertOrder({
+        ...order,
+        payment: {
+          ...order.payment,
+          method: "crypto",
+          provider: "cryptomus",
+          url: inv.url,
+          transactionId: inv.uuid || inv.payment_uuid || inv.txid || null
+        }
+      });
+
+      const payRow = new ActionRowBuilder().addComponents(
+        new ButtonBuilder().setLabel("Pay Now").setStyle(ButtonStyle.Link).setURL(inv.url)
+      );
+
       await i.channel.send({ embeds: [paymentInstructionsEmbed("crypto", order)], components: [payRow] });
       await i.reply({ content: "✅ Payment link sent.", ephemeral: true });
       return;
@@ -269,8 +353,9 @@ client.on(Events.InteractionCreate, async i => {
       if (!order) return i.reply({ content: "❌ Order not found.", ephemeral: true });
       if (order.status === "paid") return i.reply({ content: "✅ Already paid.", ephemeral: true });
 
-      const successUrl = (process.env.PUBLIC_BASE_URL || "https://example.com") + `/success?order=${order.id}`;
-      const cancelUrl = (process.env.PUBLIC_BASE_URL || "https://example.com") + `/cancel?order=${order.id}`;
+      // ✅ use your real static pages
+      const successUrl = baseUrl ? `${baseUrl}/success.html?order=${encodeURIComponent(order.id)}` : `https://example.com/success?order=${order.id}`;
+      const cancelUrl  = baseUrl ? `${baseUrl}/cancel.html?order=${encodeURIComponent(order.id)}`  : `https://example.com/cancel?order=${order.id}`;
 
       const session = await createStripeCheckout({
         env: process.env,
@@ -281,9 +366,30 @@ client.on(Events.InteractionCreate, async i => {
         cancelUrl,
       });
 
-      upsertOrder({ ...order, payment: { ...order.payment, method: "stripe", provider: "stripe", url: session.url, transactionId: session.id } });
+      // ✅ prevent crash if session.url missing
+      if (!session?.url) {
+        console.log("Stripe session response:", session);
+        return i.reply({
+          content: "❌ Failed to create Stripe checkout link. Check STRIPE_SECRET_KEY.",
+          ephemeral: true
+        });
+      }
 
-      const payRow = new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel("Pay Now").setStyle(ButtonStyle.Link).setURL(session.url));
+      upsertOrder({
+        ...order,
+        payment: {
+          ...order.payment,
+          method: "stripe",
+          provider: "stripe",
+          url: session.url,
+          transactionId: session.id || null
+        }
+      });
+
+      const payRow = new ActionRowBuilder().addComponents(
+        new ButtonBuilder().setLabel("Pay Now").setStyle(ButtonStyle.Link).setURL(session.url)
+      );
+
       await i.channel.send({ embeds: [paymentInstructionsEmbed("stripe", order)], components: [payRow] });
       await i.reply({ content: "✅ Checkout link sent.", ephemeral: true });
       return;
@@ -313,7 +419,10 @@ async function notifyPaid(order) {
         ].join("\n")
       );
 
-    await ch.send({ embeds: [embed], content: process.env.OWNER_ID ? `<@${process.env.OWNER_ID}>` : undefined });
+    await ch.send({
+      embeds: [embed],
+      content: process.env.OWNER_ID ? `<@${process.env.OWNER_ID}>` : undefined
+    });
   } catch (e) {
     console.log("notifyPaid error:", e);
   }
