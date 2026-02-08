@@ -20,13 +20,12 @@ fs.mkdirSync(path.resolve("./invoices"), { recursive: true });
 
 const STORE_NAME = process.env.STORE_NAME || "Crystal Store";
 const products = JSON.parse(fs.readFileSync("./products.json", "utf8"));
-
 const baseUrl = (process.env.PUBLIC_BASE_URL || "").replace(/\/$/, "");
 
 /* ================== Express ================== */
 const app = express();
 
-// Route-specific parsers (kept like your style)
+// Route-specific parsers
 app.use("/webhook/cryptomus", express.json({ limit: "1mb" }));
 app.use("/webhook/stripe", express.raw({ type: "application/json" }));
 
@@ -97,7 +96,7 @@ app.post("/webhook/stripe", async (req, res) => {
   }
 });
 
-// ✅ Render-friendly port binding + clear log
+// Render-friendly port binding + clear log
 const PORT = Number(process.env.PORT || 10000);
 app.listen(PORT, () => console.log("Web server started on port", PORT));
 
@@ -117,7 +116,15 @@ const money = n => `$${Number(n).toFixed(2)}`;
 const panelEmbed = () =>
   new EmbedBuilder()
     .setTitle(`${STORE_NAME} — Ticket Panel`)
-    .setDescription("Open a ticket to order or get support.\n\n✅ Fast delivery\n✅ Secure payments (Crypto/Stripe)\n✅ Invoice PDF after delivery")
+    .setDescription(
+      [
+        "Open a ticket to order or get support.",
+        "",
+        "✅ Fast delivery",
+        "✅ Secure payments (Crypto/Stripe)",
+        "✅ Invoice PDF after delivery",
+      ].join("\n")
+    )
     .setFooter({ text: "Click Open Ticket" });
 
 const welcomeEmbed = user =>
@@ -128,7 +135,11 @@ const welcomeEmbed = user =>
 const productsEmbed = () =>
   new EmbedBuilder()
     .setTitle("Products")
-    .setDescription(products.map(p => `${p.emoji} **${p.name}** — ${money(p.price)} _(ETA: ${p.delivery})_`).join("\n"))
+    .setDescription(
+      products
+        .map(p => `${p.emoji} **${p.name}** — ${money(p.price)} _(ETA: ${p.delivery})_`)
+        .join("\n")
+    )
     .setFooter({ text: "Select one product to continue." });
 
 const paymentMethodsEmbed = (prod) =>
@@ -143,6 +154,7 @@ const paymentInstructionsEmbed = (method, order) => {
     `**Total:** ${money(order.product.price)}`,
     "",
   ];
+
   if (method === "crypto") {
     lines.push("**Crypto (Cryptomus)**");
     lines.push("1) Click **Pay Now**");
@@ -154,6 +166,7 @@ const paymentInstructionsEmbed = (method, order) => {
     lines.push("2) Complete checkout");
     lines.push("3) Wait for confirmation here");
   }
+
   return new EmbedBuilder().setTitle("Payment").setDescription(lines.join("\n"));
 };
 
@@ -196,18 +209,13 @@ client.on(Events.InteractionCreate, async i => {
 
   try {
     if (i.customId === "open_ticket") {
-      // ✅ Prevent double tickets reliably using topic marker
+      // Prevent double tickets reliably using topic marker
       const existing = i.guild.channels.cache.find(
-        c =>
-          c.type === ChannelType.GuildText &&
-          c.topic === `ticket:${i.user.id}`
+        c => c.type === ChannelType.GuildText && c.topic === `ticket:${i.user.id}`
       );
 
       if (existing) {
-        return i.reply({
-          content: `⚠️ You already have a ticket: <#${existing.id}>`,
-          ephemeral: true
-        });
+        return i.reply({ content: `⚠️ You already have a ticket: <#${existing.id}>`, ephemeral: true });
       }
 
       const overwrites = [
@@ -238,7 +246,7 @@ client.on(Events.InteractionCreate, async i => {
         name: `ticket-${i.user.id}`,
         type: ChannelType.GuildText,
         parent: process.env.TICKET_CATEGORY_ID || null,
-        topic: `ticket:${i.user.id}`, // ✅ marker
+        topic: `ticket:${i.user.id}`,
         permissionOverwrites: overwrites,
       });
 
@@ -263,11 +271,9 @@ client.on(Events.InteractionCreate, async i => {
         );
         count++;
       }
-
       if (count) rows.push(row);
 
       await ticket.send({ embeds: [productsEmbed()], components: rows });
-
       await i.reply({ content: `✅ Ticket created: <#${ticket.id}>`, ephemeral: true });
       return;
     }
@@ -318,7 +324,6 @@ client.on(Events.InteractionCreate, async i => {
         env: process.env,
       });
 
-      // ✅ prevent crash if inv.url missing
       if (!inv?.url) {
         console.log("Cryptomus invoice response:", inv);
         return i.reply({
@@ -334,7 +339,7 @@ client.on(Events.InteractionCreate, async i => {
           method: "crypto",
           provider: "cryptomus",
           url: inv.url,
-          transactionId: inv.uuid || inv.payment_uuid || inv.txid || null
+          transactionId: inv.uuid || null
         }
       });
 
@@ -353,9 +358,12 @@ client.on(Events.InteractionCreate, async i => {
       if (!order) return i.reply({ content: "❌ Order not found.", ephemeral: true });
       if (order.status === "paid") return i.reply({ content: "✅ Already paid.", ephemeral: true });
 
-      // ✅ use your real static pages
-      const successUrl = baseUrl ? `${baseUrl}/success.html?order=${encodeURIComponent(order.id)}` : `https://example.com/success?order=${order.id}`;
-      const cancelUrl  = baseUrl ? `${baseUrl}/cancel.html?order=${encodeURIComponent(order.id)}`  : `https://example.com/cancel?order=${order.id}`;
+      const successUrl = baseUrl
+        ? `${baseUrl}/success.html?order=${encodeURIComponent(order.id)}`
+        : `https://example.com/success?order=${order.id}`;
+      const cancelUrl = baseUrl
+        ? `${baseUrl}/cancel.html?order=${encodeURIComponent(order.id)}`
+        : `https://example.com/cancel?order=${order.id}`;
 
       const session = await createStripeCheckout({
         env: process.env,
@@ -366,7 +374,6 @@ client.on(Events.InteractionCreate, async i => {
         cancelUrl,
       });
 
-      // ✅ prevent crash if session.url missing
       if (!session?.url) {
         console.log("Stripe session response:", session);
         return i.reply({
@@ -504,4 +511,13 @@ client.on(Events.MessageCreate, async m => {
 
 process.on("unhandledRejection", err => console.log(err));
 process.on("uncaughtException", err => console.log(err));
-client.login(process.env.DISCORD_TOKEN);
+
+/* ===== Discord login diagnostics (fix offline fast) ===== */
+console.log("DISCORD_TOKEN present?", Boolean(process.env.DISCORD_TOKEN));
+
+client.on("error", (e) => console.log("Discord client error:", e));
+client.on("shardError", (e) => console.log("Discord shard error:", e));
+
+client.login(process.env.DISCORD_TOKEN)
+  .then(() => console.log("Discord login OK"))
+  .catch((e) => console.log("Discord login FAILED:", e));
